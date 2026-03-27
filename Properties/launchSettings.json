@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Kishimn (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Kishimn (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
