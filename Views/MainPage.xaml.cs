@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using Windows.Storage.Pickers;
 
 namespace Kishimn.Views
@@ -9,76 +10,6 @@ namespace Kishimn.Views
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        // コンテナの選択肢一覧。
-        private static readonly IReadOnlyList<OptionItem> ContainerOptions =
-        [
-            new("MP4", "mp4"),
-            new("MKV", "mkv")
-        ];
-
-        // 動画エンコーダーの選択肢一覧。
-        // 表示名 / FFmpegエンコーダー名 / コーデックファミリー / 品質指定パラメータ種別 / 品質値の最小値 / 品質値の最大値 / 品質値のデフォルト値
-        private static readonly IReadOnlyList<EncoderOption> VideoEncoderOptions =
-        [
-            new("H264 (CPU)", "libx264", VideoCodecFamily.H264, RateParamKind.Crf, 16, 40, 23),
-            new("H264 (AMD AMF)", "h264_amf", VideoCodecFamily.H264, RateParamKind.AmfH264Qp, 0, 51, 23),
-            new("H264 (Intel QSV)", "h264_qsv", VideoCodecFamily.H264, RateParamKind.GlobalQuality, 1, 51, 23),
-            new("H264 (NVIDIA NVENC)", "h264_nvenc", VideoCodecFamily.H264, RateParamKind.Cq, 0, 51, 23),
-            new("H265 (CPU)", "libx265", VideoCodecFamily.H265, RateParamKind.Crf, 16, 40, 28),
-            new("H265 (AMD AMF)", "hevc_amf", VideoCodecFamily.H265, RateParamKind.AmfHevcQp, 0, 51, 28),
-            new("H265 (Intel QSV)", "hevc_qsv", VideoCodecFamily.H265, RateParamKind.GlobalQuality, 1, 51, 28),
-            new("H265 (NVIDIA NVENC)", "hevc_nvenc", VideoCodecFamily.H265, RateParamKind.Cq, 0, 51, 28),
-            new("VP9 (CPU)", "libvpx-vp9", VideoCodecFamily.VP9, RateParamKind.Crf, 15, 50, 31),
-            new("VP9 (Intel QSV)", "vp9_qsv", VideoCodecFamily.VP9, RateParamKind.GlobalQuality, 1, 51, 31),
-            new("AV1 (CPU)", "libsvtav1", VideoCodecFamily.AV1, RateParamKind.Crf, 15, 50, 35),
-            new("AV1 (AMD AMF)", "av1_amf", VideoCodecFamily.AV1, RateParamKind.AmfAv1Qp, 0, 51, 28),
-            new("AV1 (Intel QSV)", "av1_qsv", VideoCodecFamily.AV1, RateParamKind.GlobalQuality, 1, 51, 28),
-            new("AV1 (NVIDIA NVENC)", "av1_nvenc", VideoCodecFamily.AV1, RateParamKind.Cq, 0, 51, 28)
-        ];
-
-        // フレームレートの選択肢一覧。
-        private static readonly IReadOnlyList<OptionItem> FrameRateOptions =
-        [
-            new("オリジナル", "original"),
-            new("5", "5"),
-            new("10", "10"),
-            new("15", "15"),
-            new("23.976", "24000/1001"),
-            new("24", "24"),
-            new("25", "25"),
-            new("29.97", "30000/1001"),
-            new("30", "30"),
-            new("50", "50"),
-            new("59.94", "60000/1001"),
-            new("60", "60"),
-            new("72", "72"),
-            new("75", "75"),
-            new("90", "90"),
-            new("120", "120"),
-            new("144", "144")
-        ];
-
-        // レート指定の選択肢一覧。
-        private static readonly IReadOnlyList<string> RateModeOptions =
-        [
-            "品質",
-            "ビットレート"
-        ];
-
-        // 音声オプションの選択肢一覧。
-        private static readonly IReadOnlyList<string> AudioOptions =
-        [
-            "音声無し (-an)",
-            "コピー (-c:a copy)",
-            "音量調整 (YouTube)",
-            "音量調整 (ARIB TR-B32)"
-        ];
-
-        // 既定値。
-        private const string DefaultContainer = "mp4";
-        private const string DefaultFrameRate = "original";
-        private const int DefaultBitrateKbps = 2500;
-
         // UI初期化時のイベント多重実行を抑止するフラグ。
         private bool _isInitializing;
 
@@ -97,18 +28,18 @@ namespace Kishimn.Views
             _isInitializing = true;
 
             ContainerComboBox.ItemsSource = ContainerOptions;
-            ContainerComboBox.DisplayMemberPath = nameof(OptionItem.Label);
-            ContainerComboBox.SelectedValuePath = nameof(OptionItem.Value);
+            ContainerComboBox.DisplayMemberPath = nameof(OptionItem<string>.Label);
+            ContainerComboBox.SelectedValuePath = nameof(OptionItem<string>.Value);
 
             FrameRateComboBox.ItemsSource = FrameRateOptions;
-            FrameRateComboBox.DisplayMemberPath = nameof(OptionItem.Label);
-            FrameRateComboBox.SelectedValuePath = nameof(OptionItem.Value);
+            FrameRateComboBox.DisplayMemberPath = nameof(OptionItem<string>.Label);
+            FrameRateComboBox.SelectedValuePath = nameof(OptionItem<string>.Value);
 
-            RateModeRadioButtons.ItemsSource = RateModeOptions;
-            RateModeRadioButtons.SelectedIndex = 0;
+            RateModeRadioButtons.ItemsSource = RateModeOptions.Select(static option => option.Label).ToList();
+            RateModeRadioButtons.SelectedIndex = FindOptionIndex(RateModeOptions, DefaultRateMode);
 
-            AudioOptionRadioButtons.ItemsSource = AudioOptions;
-            AudioOptionRadioButtons.SelectedIndex = 1;
+            AudioOptionRadioButtons.ItemsSource = AudioOptions.Select(static option => option.Label).ToList();
+            AudioOptionRadioButtons.SelectedIndex = FindOptionIndex(AudioOptions, DefaultAudioOption);
 
             VideoEncoderComboBox.ItemsSource = VideoEncoderOptions;
             VideoEncoderComboBox.DisplayMemberPath = nameof(EncoderOption.Label);
@@ -119,14 +50,14 @@ namespace Kishimn.Views
         // コンテナ選択に応じてMP4固有オプションの表示状態を切り替える。
         private void RefreshContainerUi()
         {
-            bool isMp4 = SelectedContainerValue() == "mp4";
+            bool isMp4 = SelectedContainerValue() == DefaultContainer;
             Mp4OptionsPanel.Visibility = isMp4 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         // レート指定に応じて品質スライダーとビットレート入力の表示を切り替える。
         private void RefreshRateModeUi()
         {
-            bool qualityMode = IsQualityMode();
+            bool qualityMode = SelectedRateMode() == RateMode.Quality;
             QualitySliderPanel.Visibility = qualityMode ? Visibility.Visible : Visibility.Collapsed;
             BitratePanel.Visibility = qualityMode ? Visibility.Collapsed : Visibility.Visible;
         }
@@ -159,11 +90,11 @@ namespace Kishimn.Views
 
             ContainerComboBox.SelectedValue = DefaultContainer;
             FastStartCheckBox.IsChecked = true;
-            VideoEncoderComboBox.SelectedIndex = 0;
+            VideoEncoderComboBox.SelectedIndex = DefaultVideoEncoderIndex;
             FrameRateComboBox.SelectedValue = DefaultFrameRate;
-            RateModeRadioButtons.SelectedIndex = 0;
+            RateModeRadioButtons.SelectedIndex = FindOptionIndex(RateModeOptions, DefaultRateMode);
             BitrateTextBox.Text = DefaultBitrateKbps.ToString(CultureInfo.InvariantCulture);
-            AudioOptionRadioButtons.SelectedIndex = 1;
+            AudioOptionRadioButtons.SelectedIndex = FindOptionIndex(AudioOptions, DefaultAudioOption);
 
             _isInitializing = false;
 
@@ -369,7 +300,7 @@ namespace Kishimn.Views
             }
 
             // ビットレートモードでは値の妥当性を検証する。
-            if (!IsQualityMode() && !TryParseBitrateKbps(out _))
+            if (SelectedRateMode() == RateMode.Bitrate && !TryParseBitrateKbps(out _))
             {
                 errorMessage = "ビットレートは 1 以上の整数 (kbps) を入力してください。";
                 return false;
@@ -409,7 +340,7 @@ namespace Kishimn.Views
             }
 
             // レートモードごとに動画品質関連オプションを分割して追加する。
-            if (IsQualityMode())
+            if (SelectedRateMode() == RateMode.Quality)
             {
                 int quality = (int)Math.Round(QualitySlider.Value);
                 AddQualityOptions(args, encoder, quality);
@@ -421,7 +352,7 @@ namespace Kishimn.Views
             }
 
             // MP4 かつ有効時のみ faststart を追加する。
-            if (SelectedContainerValue() == "mp4")
+            if (SelectedContainerValue() == DefaultContainer)
             {
                 if (FastStartCheckBox.IsChecked == true)
                 {
@@ -594,9 +525,17 @@ namespace Kishimn.Views
             return null;
         }
 
-        // 現在のレート指定が品質モードかどうかを返す。
-        private bool IsQualityMode()
-            => RateModeRadioButtons.SelectedIndex == 0;
+        // 現在選択中のレート指定モードを取得する。
+        private RateMode SelectedRateMode()
+        {
+            int selectedIndex = RateModeRadioButtons.SelectedIndex;
+            if (selectedIndex < 0 || selectedIndex >= RateModeOptions.Count)
+            {
+                return DefaultRateMode;
+            }
+
+            return RateModeOptions[selectedIndex].Value;
+        }
 
         // 現在選択中のコンテナ値を取得する。
         private string SelectedContainerValue()
@@ -608,18 +547,32 @@ namespace Kishimn.Views
 
         // 現在選択中のエンコーダー情報を取得する。
         private EncoderOption SelectedEncoder()
-            => VideoEncoderComboBox.SelectedItem as EncoderOption ?? VideoEncoderOptions[0];
+            => VideoEncoderComboBox.SelectedItem as EncoderOption ?? VideoEncoderOptions[DefaultVideoEncoderIndex];
 
         // 現在選択中の音声モード値を取得する。
         private AudioMode SelectedAudioMode()
         {
-            return AudioOptionRadioButtons.SelectedIndex switch
+            int selectedIndex = AudioOptionRadioButtons.SelectedIndex;
+            if (selectedIndex < 0 || selectedIndex >= AudioOptions.Count)
             {
-                0 => AudioMode.None,
-                2 => AudioMode.YouTube,
-                3 => AudioMode.Arib,
-                _ => AudioMode.Copy
-            };
+                return DefaultAudioOption;
+            }
+
+            return AudioOptions[selectedIndex].Value;
+        }
+
+        // 指定値に一致する選択肢のインデックスを返す。
+        private static int FindOptionIndex<TValue>(IReadOnlyList<OptionItem<TValue>> options, TValue value)
+        {
+            for (int index = 0; index < options.Count; index++)
+            {
+                if (EqualityComparer<TValue>.Default.Equals(options[index].Value, value))
+                {
+                    return index;
+                }
+            }
+
+            return DefaultOptionFallbackIndex;
         }
 
         // エラーメッセージをダイアログ表示する。
@@ -636,46 +589,5 @@ namespace Kishimn.Views
             _ = await dialog.ShowAsync();
         }
 
-        // 表示用ラベルと内部値を保持する共通項目。
-        private sealed record OptionItem(string Label, string Value);
-
-        // 動画コーデック分類を表す列挙型。
-        private enum VideoCodecFamily
-        {
-            H264,
-            H265,
-            VP9,
-            AV1
-        }
-
-        // 品質指定で利用するFFmpegパラメータ種別を表す列挙型。
-        private enum RateParamKind
-        {
-            Crf,
-            Cq,
-            GlobalQuality,
-            AmfH264Qp,
-            AmfHevcQp,
-            AmfAv1Qp
-        }
-
-        // 音声モードを表す列挙型。
-        private enum AudioMode
-        {
-            None,
-            Copy,
-            YouTube,
-            Arib
-        }
-
-        // 動画エンコーダーごとの制約値を保持する定義。
-        private sealed record EncoderOption(
-            string Label,
-            string EncoderName,
-            VideoCodecFamily CodecFamily,
-            RateParamKind RateParameter,
-            int QualityMin,
-            int QualityMax,
-            int QualityDefault);
     }
 }
