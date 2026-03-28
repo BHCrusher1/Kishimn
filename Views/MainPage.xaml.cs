@@ -17,13 +17,13 @@ namespace Kishimn.Views
         public MainPage()
         {
             InitializeComponent();
-            InitializeSelections();
-            ResetBodySettings();
+            InitializeSelectionControls();
+            ResetBodyToDefaults();
             UpdateCommandPreview();
         }
 
-        // 画面起動時に全選択肢をコード側からUIへバインドする。
-        private void InitializeSelections()
+        // 画面起動時に選択系コントロールへ選択肢を反映する。
+        private void InitializeSelectionControls()
         {
             _isInitializing = true;
 
@@ -31,20 +31,39 @@ namespace Kishimn.Views
             ContainerComboBox.DisplayMemberPath = nameof(OptionItem<string>.Label);
             ContainerComboBox.SelectedValuePath = nameof(OptionItem<string>.Value);
 
+            VideoEncoderComboBox.ItemsSource = VideoEncoderOptions;
+            VideoEncoderComboBox.DisplayMemberPath = nameof(EncoderOption.Label);
+
             FrameRateComboBox.ItemsSource = FrameRateOptions;
             FrameRateComboBox.DisplayMemberPath = nameof(OptionItem<string>.Label);
             FrameRateComboBox.SelectedValuePath = nameof(OptionItem<string>.Value);
 
             RateModeRadioButtons.ItemsSource = RateModeOptions.Select(static option => option.Label).ToList();
-            RateModeRadioButtons.SelectedIndex = FindOptionIndex(RateModeOptions, DefaultRateMode);
 
             AudioOptionRadioButtons.ItemsSource = AudioOptions.Select(static option => option.Label).ToList();
-            AudioOptionRadioButtons.SelectedIndex = FindOptionIndex(AudioOptions, DefaultAudioOption);
-
-            VideoEncoderComboBox.ItemsSource = VideoEncoderOptions;
-            VideoEncoderComboBox.DisplayMemberPath = nameof(EncoderOption.Label);
 
             _isInitializing = false;
+        }
+
+        // Body部の値を既定値へ戻す。
+        private void ResetBodyToDefaults()
+        {
+            _isInitializing = true;
+
+            ContainerComboBox.SelectedValue = DefaultContainer;
+            FastStartCheckBox.IsChecked = true;
+            VideoEncoderComboBox.SelectedIndex = DefaultVideoEncoderIndex;
+            FrameRateComboBox.SelectedValue = DefaultFrameRate;
+            RateModeRadioButtons.SelectedIndex = FindOptionIndexByValue(RateModeOptions, DefaultRateMode);
+            BitrateTextBox.Text = DefaultBitrateKbps.ToString(CultureInfo.InvariantCulture);
+            AudioOptionRadioButtons.SelectedIndex = FindOptionIndexByValue(AudioOptions, DefaultAudioOption);
+
+            _isInitializing = false;
+
+            RefreshContainerUi();
+            // リセット時は現在エンコーダーの品質デフォルト値へ必ず戻す。
+            RefreshEncoderQualityRange(resetToDefault: true);
+            RefreshRateModeUi();
         }
 
         // コンテナ選択に応じてMP4固有オプションの表示状態を切り替える。
@@ -81,27 +100,6 @@ namespace Kishimn.Views
             // スライダー左右に現在エンコーダーの品質範囲を明示する。
             QualityMinLabelTextBlock.Text = $"高品質 ({encoder.QualityMin.ToString(CultureInfo.InvariantCulture)})";
             QualityMaxLabelTextBlock.Text = $"低品質 ({encoder.QualityMax.ToString(CultureInfo.InvariantCulture)})";
-        }
-
-        // Body部の値を要件の初期値へ戻す。
-        private void ResetBodySettings()
-        {
-            _isInitializing = true;
-
-            ContainerComboBox.SelectedValue = DefaultContainer;
-            FastStartCheckBox.IsChecked = true;
-            VideoEncoderComboBox.SelectedIndex = DefaultVideoEncoderIndex;
-            FrameRateComboBox.SelectedValue = DefaultFrameRate;
-            RateModeRadioButtons.SelectedIndex = FindOptionIndex(RateModeOptions, DefaultRateMode);
-            BitrateTextBox.Text = DefaultBitrateKbps.ToString(CultureInfo.InvariantCulture);
-            AudioOptionRadioButtons.SelectedIndex = FindOptionIndex(AudioOptions, DefaultAudioOption);
-
-            _isInitializing = false;
-
-            RefreshContainerUi();
-            // リセット時は現在エンコーダーの品質デフォルト値へ必ず戻す。
-            RefreshEncoderQualityRange(resetToDefault: true);
-            RefreshRateModeUi();
         }
 
         // 設定変更時にコマンドプレビューを再生成する共通ハンドラ。
@@ -203,7 +201,7 @@ namespace Kishimn.Views
         // Body部の設定だけを初期値へ戻し、プレビューを更新する。
         private void OnResetClick(object sender, RoutedEventArgs e)
         {
-            ResetBodySettings();
+            ResetBodyToDefaults();
             UpdateCommandPreview();
         }
 
@@ -525,6 +523,18 @@ namespace Kishimn.Views
             return null;
         }
 
+        // 現在選択中のコンテナ値を取得する。
+        private string SelectedContainerValue()
+            => ContainerComboBox.SelectedValue as string ?? DefaultContainer;
+
+        // 現在選択中のエンコーダー情報を取得する。
+        private EncoderOption SelectedEncoder()
+            => VideoEncoderComboBox.SelectedItem as EncoderOption ?? VideoEncoderOptions[DefaultVideoEncoderIndex];
+
+        // 現在選択中のフレームレート値を取得する。
+        private string SelectedFrameRateValue()
+            => FrameRateComboBox.SelectedValue as string ?? DefaultFrameRate;
+
         // 現在選択中のレート指定モードを取得する。
         private RateMode SelectedRateMode()
         {
@@ -536,18 +546,6 @@ namespace Kishimn.Views
 
             return RateModeOptions[selectedIndex].Value;
         }
-
-        // 現在選択中のコンテナ値を取得する。
-        private string SelectedContainerValue()
-            => ContainerComboBox.SelectedValue as string ?? DefaultContainer;
-
-        // 現在選択中のフレームレート値を取得する。
-        private string SelectedFrameRateValue()
-            => FrameRateComboBox.SelectedValue as string ?? DefaultFrameRate;
-
-        // 現在選択中のエンコーダー情報を取得する。
-        private EncoderOption SelectedEncoder()
-            => VideoEncoderComboBox.SelectedItem as EncoderOption ?? VideoEncoderOptions[DefaultVideoEncoderIndex];
 
         // 現在選択中の音声モード値を取得する。
         private AudioMode SelectedAudioMode()
@@ -561,8 +559,8 @@ namespace Kishimn.Views
             return AudioOptions[selectedIndex].Value;
         }
 
-        // 指定値に一致する選択肢のインデックスを返す。
-        private static int FindOptionIndex<TValue>(IReadOnlyList<OptionItem<TValue>> options, TValue value)
+        // 指定値に一致する選択肢インデックスを返す。
+        private static int FindOptionIndexByValue<TValue>(IReadOnlyList<OptionItem<TValue>> options, TValue value)
         {
             for (int index = 0; index < options.Count; index++)
             {
