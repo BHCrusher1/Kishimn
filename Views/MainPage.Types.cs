@@ -26,7 +26,8 @@ namespace Kishimn.Views
             new("H265 (NVIDIA NVENC)", "hevc_nvenc", VideoCodecFamily.H265, RateParamKind.Cq, 0, 51, 28),
             new("VP9 (CPU)", "libvpx-vp9", VideoCodecFamily.VP9, RateParamKind.Crf, 15, 50, 31),
             new("VP9 (Intel QSV)", "vp9_qsv", VideoCodecFamily.VP9, RateParamKind.GlobalQuality, 1, 51, 31),
-            new("AV1 (CPU)", "libsvtav1", VideoCodecFamily.AV1, RateParamKind.Crf, 15, 50, 35),
+            new("AV1 (CPU libaom-av1)", "libaom-av1", VideoCodecFamily.AV1, RateParamKind.Crf, 15, 50, 35),
+            new("AV1 (CPU libsvtav1)", "libsvtav1", VideoCodecFamily.AV1, RateParamKind.Crf, 15, 50, 35),
             new("AV1 (AMD AMF)", "av1_amf", VideoCodecFamily.AV1, RateParamKind.AmfAv1Qp, 0, 51, 28),
             new("AV1 (Intel QSV)", "av1_qsv", VideoCodecFamily.AV1, RateParamKind.GlobalQuality, 1, 51, 28),
             new("AV1 (NVIDIA NVENC)", "av1_nvenc", VideoCodecFamily.AV1, RateParamKind.Cq, 0, 51, 28)
