@@ -3,47 +3,37 @@ using Microsoft.UI.Xaml.Navigation;
 namespace Kishimn
 {
     /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
+    /// アプリケーション全体の起動とナビゲーションを管理するクラス。
     /// </summary>
     public partial class App : Application
     {
-        private Window window = Window.Current;
+        // ファイルピッカー初期化などで利用するメインウィンドウ参照を保持する。
+        public static Window MainWindow { get; private set; } = Window.Current;
 
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
+        // アプリケーションの初期化を行う。
         public App()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
-        /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used such as when the application is launched to open a specific file.
-        /// </summary>
-        /// <param name="e">Details about the launch request and process.</param>
+        // アプリ起動時にルートフレームを作成し、メインページへ遷移する。
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            window ??= new Window();
+            MainWindow ??= new Window();
 
-            if (window.Content is not Frame rootFrame)
+            if (MainWindow.Content is not Frame rootFrame)
             {
                 rootFrame = new Frame();
                 rootFrame.NavigationFailed += OnNavigationFailed;
-                window.Content = rootFrame;
+                MainWindow.Content = rootFrame;
             }
 
             _ = rootFrame.Navigate(typeof(MainPage), e.Arguments);
-            window.Activate();
+            MainWindow.Activate();
         }
 
-        /// <summary>
-        /// Invoked when Navigation to a certain page fails
-        /// </summary>
-        /// <param name="sender">The Frame which failed navigation</param>
-        /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        // ページ遷移失敗時に例外を送出して異常を検知する。
+        private static void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
