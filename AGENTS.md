@@ -30,4 +30,4 @@
 
 ## ビルドコマンド
 
-`dotnet publish -c Release -r win-x64 --self-contained false`
+`dotnet publish -c Release -p:Platform=x64 --self-contained false`
