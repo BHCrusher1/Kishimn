@@ -12,6 +12,10 @@ namespace Kishimn.Views
     {
         // UI初期化時のイベント多重実行を抑止するフラグ。
         private bool _isInitializing;
+        // ffmpeg 探索結果をキャッシュする。
+        private string? _cachedFfmpegPath;
+        // ffmpeg 探索を実行済みかどうかを保持する。
+        private bool _isFfmpegPathCached;
 
         // 初期化処理を行い、選択肢をUIへ反映する。
         public MainPage()
@@ -250,7 +254,7 @@ namespace Kishimn.Views
         {
             string input = string.IsNullOrWhiteSpace(InputPathTextBox.Text) ? "<input>" : InputPathTextBox.Text.Trim();
             string output = string.IsNullOrWhiteSpace(OutputPathTextBox.Text) ? "<output>" : OutputPathTextBox.Text.Trim();
-            string ffmpegPath = ResolveFfmpegPath() ?? "ffmpeg.exe";
+            string ffmpegPath = GetCachedFfmpegPath() ?? "ffmpeg.exe";
 
             string arguments = BuildFfmpegArguments(input, output);
             CommandLineTextBox.Text = $"{FormatExecutable(ffmpegPath)} {arguments}";
@@ -260,7 +264,7 @@ namespace Kishimn.Views
         private bool TryBuildExecutionCommand(out string ffmpegPath, out string arguments, out string errorMessage)
         {
             // 戻り値の初期化を行う。
-            ffmpegPath = ResolveFfmpegPath() ?? string.Empty;
+            ffmpegPath = GetCachedFfmpegPath() ?? string.Empty;
             arguments = string.Empty;
             errorMessage = string.Empty;
 
@@ -532,6 +536,19 @@ namespace Kishimn.Views
 
             // 見つからない場合は null を返す。
             return null;
+        }
+
+        // ffmpeg 実行ファイルパスを初回のみ探索して再利用する。
+        private string? GetCachedFfmpegPath()
+        {
+            // まだ探索していない場合のみ、実体探索を実行して結果を保持する。
+            if (!_isFfmpegPathCached)
+            {
+                _cachedFfmpegPath = ResolveFfmpegPath();
+                _isFfmpegPathCached = true;
+            }
+
+            return _cachedFfmpegPath;
         }
 
         // 現在選択中のコンテナ値を取得する。
