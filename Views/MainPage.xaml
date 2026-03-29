@@ -93,7 +93,7 @@
                         <StackPanel Grid.Column="1" Spacing="0">
                             <StackPanel x:Name="QualitySliderPanel" Grid.Column="0">
                                 <TextBlock x:Name="QualityValueTextBlock" />
-                                <Slider x:Name="QualitySlider" SmallChange="1" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" ValueChanged="OnAnySettingChanged" />
+                                <Slider x:Name="QualitySlider" SmallChange="1" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" ValueChanged="OnQualitySettingChanged" />
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />

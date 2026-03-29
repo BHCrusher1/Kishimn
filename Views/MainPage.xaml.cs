@@ -102,7 +102,7 @@ namespace Kishimn.Views
             QualityMaxLabelTextBlock.Text = $"低品質 ({encoder.QualityMax.ToString(CultureInfo.InvariantCulture)})";
         }
 
-        // 設定変更時にコマンドプレビューを再生成する共通ハンドラ。
+        // 一般設定変更時にコマンドプレビューを再生成する共通ハンドラ。
         private void OnAnySettingChanged(object sender, object e)
         {
             if (_isInitializing)
@@ -110,8 +110,6 @@ namespace Kishimn.Views
                 return;
             }
 
-            int qualityValue = (int)Math.Round(QualitySlider.Value);
-            QualityValueTextBlock.Text = $"品質値: {qualityValue.ToString(CultureInfo.InvariantCulture)}";
             UpdateCommandPreview();
         }
 
@@ -148,6 +146,19 @@ namespace Kishimn.Views
             }
 
             RefreshRateModeUi();
+            UpdateCommandPreview();
+        }
+
+        // 品質設定変更時に品質表示とコマンドプレビューを更新するハンドラ。
+        private void OnQualitySettingChanged(object sender, object e)
+        {
+            if (_isInitializing)
+            {
+                return;
+            }
+
+            int qualityValue = (int)Math.Round(QualitySlider.Value);
+            QualityValueTextBlock.Text = $"品質値: {qualityValue.ToString(CultureInfo.InvariantCulture)}";
             UpdateCommandPreview();
         }
 
