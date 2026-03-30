@@ -29,6 +29,9 @@ namespace Kishimn
                 MainWindow.Content = rootFrame;
             }
 
+            // メインウィンドウのタイトルをアプリ名に設定する。
+            MainWindow.Title = "Kishimn";
+
             _ = rootFrame.Navigate(typeof(MainPage), e.Arguments);
 
             // システム背景にMicaを適用し、未対応環境ではOS側のフォールバックに任せる。
