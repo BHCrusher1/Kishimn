@@ -127,8 +127,11 @@ namespace Kishimn.Views
             }
 
             RefreshContainerUi();
-            SyncOutputExtensionWithContainer();
-            UpdateCommandPreview();
+            bool outputPathChanged = SyncOutputExtensionWithContainer();
+            if (!outputPathChanged)
+            {
+                UpdateCommandPreview();
+            }
         }
 
         // エンコーダー変更時に品質範囲を更新してコマンドプレビューへ反映する。
@@ -498,12 +501,13 @@ namespace Kishimn.Views
         }
 
         // コンテナ変更時に、既に設定済みの保存先拡張子を選択コンテナへ合わせる。
-        private void SyncOutputExtensionWithContainer()
+        // 変更を反映した場合は true を返し、未変更時は false を返す。
+        private bool SyncOutputExtensionWithContainer()
         {
             string outputPath = OutputPathTextBox.Text.Trim();
             if (string.IsNullOrWhiteSpace(outputPath))
             {
-                return;
+                return false;
             }
 
             try
@@ -512,14 +516,22 @@ namespace Kishimn.Views
                 string currentExtension = Path.GetExtension(outputPath);
                 if (string.Equals(currentExtension, targetExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    return;
+                    return false;
                 }
 
-                OutputPathTextBox.Text = Path.ChangeExtension(outputPath, targetExtension);
+                string updatedPath = Path.ChangeExtension(outputPath, targetExtension);
+                if (string.Equals(updatedPath, outputPath, StringComparison.Ordinal))
+                {
+                    return false;
+                }
+
+                OutputPathTextBox.Text = updatedPath;
+                return true;
             }
             catch
             {
                 // 不正なパス形式などで変換できない場合は、ユーザー入力をそのまま維持する。
+                return false;
             }
         }
 
