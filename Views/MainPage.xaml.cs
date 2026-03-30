@@ -332,9 +332,17 @@ namespace Kishimn.Views
             }
 
             // 入力と出力が同一パスなら拒否する。
-            if (string.Equals(Path.GetFullPath(inputPath), Path.GetFullPath(outputPath), StringComparison.OrdinalIgnoreCase))
+            try
             {
-                errorMessage = "変換元ファイルと保存先ファイルは別のパスにしてください。";
+                if (string.Equals(Path.GetFullPath(inputPath), Path.GetFullPath(outputPath), StringComparison.OrdinalIgnoreCase))
+                {
+                    errorMessage = "変換元ファイルと保存先ファイルは別のパスにしてください。";
+                    return false;
+                }
+            }
+            catch
+            {
+                errorMessage = "入力または出力パスの形式が不正です。";
                 return false;
             }
 
