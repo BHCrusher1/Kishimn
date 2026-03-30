@@ -42,9 +42,9 @@ namespace Kishimn.Views
             FrameRateComboBox.DisplayMemberPath = nameof(OptionItem<string>.Label);
             FrameRateComboBox.SelectedValuePath = nameof(OptionItem<string>.Value);
 
-            RateModeRadioButtons.ItemsSource = RateModeOptions.Select(static option => option.Label).ToList();
+            RateModeComboBox.ItemsSource = RateModeOptions.Select(static option => option.Label).ToList();
 
-            AudioOptionRadioButtons.ItemsSource = AudioOptions.Select(static option => option.Label).ToList();
+            AudioOptionComboBox.ItemsSource = AudioOptions.Select(static option => option.Label).ToList();
 
             _isInitializing = false;
         }
@@ -58,9 +58,9 @@ namespace Kishimn.Views
             FastStartCheckBox.IsChecked = true;
             VideoEncoderComboBox.SelectedIndex = DefaultVideoEncoderIndex;
             FrameRateComboBox.SelectedValue = DefaultFrameRate;
-            RateModeRadioButtons.SelectedIndex = FindOptionIndexByValue(RateModeOptions, DefaultRateMode);
+            RateModeComboBox.SelectedIndex = FindOptionIndexByValue(RateModeOptions, DefaultRateMode);
             BitrateTextBox.Text = DefaultBitrateKbps.ToString(CultureInfo.InvariantCulture);
-            AudioOptionRadioButtons.SelectedIndex = FindOptionIndexByValue(AudioOptions, DefaultAudioOption);
+            AudioOptionComboBox.SelectedIndex = FindOptionIndexByValue(AudioOptions, DefaultAudioOption);
 
             _isInitializing = false;
 
@@ -594,7 +594,7 @@ namespace Kishimn.Views
         // 現在選択中のレート指定モードを取得する。
         private RateMode SelectedRateMode()
         {
-            int selectedIndex = RateModeRadioButtons.SelectedIndex;
+            int selectedIndex = RateModeComboBox.SelectedIndex;
             if (selectedIndex < 0 || selectedIndex >= RateModeOptions.Count)
             {
                 return DefaultRateMode;
@@ -606,7 +606,7 @@ namespace Kishimn.Views
         // 現在選択中の音声モード値を取得する。
         private AudioMode SelectedAudioMode()
         {
-            int selectedIndex = AudioOptionRadioButtons.SelectedIndex;
+            int selectedIndex = AudioOptionComboBox.SelectedIndex;
             if (selectedIndex < 0 || selectedIndex >= AudioOptions.Count)
             {
                 return DefaultAudioOption;

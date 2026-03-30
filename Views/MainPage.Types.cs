@@ -58,7 +58,7 @@ namespace Kishimn.Views
         // レート指定の選択肢一覧。
         private static readonly IReadOnlyList<OptionItem<RateMode>> RateModeOptions =
         [
-            new("品質", RateMode.Quality),
+            new("品質値", RateMode.Quality),
             new("ビットレート", RateMode.Bitrate)
         ];
 

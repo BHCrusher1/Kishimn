@@ -14,25 +14,6 @@
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
-
-            <Style x:Key="MyLabel" TargetType="TextBlock">
-                <Setter Property="Foreground"
-                        Value="{ThemeResource TextFillColorPrimaryBrush}" />
-            </Style>
-
-            <Style x:Key="PrimaryAction"
-                   TargetType="Button">
-                <Setter Property="FontSize"
-                        Value="{ThemeResource ControlContentThemeFontSize}" />
-                <Setter Property="Padding"
-                        Value="14,10" />
-                <Setter Property="Background"
-                        Value="{ThemeResource AccentFillColorDefaultBrush}" />
-                <Setter Property="CornerRadius"
-                        Value="8" />
-                <Setter Property="Foreground"
-                        Value="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
-            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
