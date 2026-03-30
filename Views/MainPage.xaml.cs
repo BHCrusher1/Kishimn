@@ -187,10 +187,34 @@ namespace Kishimn.Views
         // 出力ファイルの参照ダイアログを開いて選択結果を反映する。
         private async void OnBrowseOutputClick(object sender, RoutedEventArgs e)
         {
+            // FileSavePickerで新規作成された可能性が高いファイルかを判定する。
+            static bool WasLikelyCreatedByPicker(string filePath, DateTimeOffset pickerOpenedAtUtc)
+            {
+                try
+                {
+                    DateTime creationUtc = File.GetCreationTimeUtc(filePath);
+                    if (creationUtc == DateTime.MinValue || creationUtc == DateTime.MaxValue)
+                    {
+                        return false;
+                    }
+
+                    // ファイルシステム時刻の丸め誤差を考慮して少し余裕を持たせる。
+                    return creationUtc >= pickerOpenedAtUtc.UtcDateTime.AddSeconds(-2);
+                }
+                catch
+                {
+                    // 作成日時が取得できない場合は既存ファイル扱いで削除しない。
+                    return false;
+                }
+            }
+
             FileSavePicker picker = new();
             picker.SuggestedFileName = BuildSuggestedOutputName();
             picker.FileTypeChoices.Add("Video", [$".{SelectedContainerValue()}"]);
             WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow));
+
+            // 新規作成判定に使うため、ピッカー表示時刻を保持する。
+            DateTimeOffset pickerOpenedAtUtc = DateTimeOffset.UtcNow;
 
             var file = await picker.PickSaveFileAsync();
             if (file is null)
@@ -202,7 +226,9 @@ namespace Kishimn.Views
             try
             {
                 FileInfo selectedFileInfo = new(file.Path);
-                if (selectedFileInfo.Exists && selectedFileInfo.Length == 0)
+                if (selectedFileInfo.Exists
+                    && selectedFileInfo.Length == 0
+                    && WasLikelyCreatedByPicker(file.Path, pickerOpenedAtUtc))
                 {
                     File.Delete(file.Path);
                 }
@@ -239,7 +265,7 @@ namespace Kishimn.Views
                 {
                     FileName = ffmpegPath,
                     Arguments = arguments,
-                    UseShellExecute = true,
+                    UseShellExecute = false,
                     WorkingDirectory = Path.GetDirectoryName(OutputPathTextBox.Text.Trim()) ?? AppContext.BaseDirectory
                 };
 
