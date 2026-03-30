@@ -65,6 +65,7 @@ namespace Kishimn.Views
             _isInitializing = false;
 
             RefreshContainerUi();
+            SyncOutputExtensionWithContainer();
             // リセット時は現在エンコーダーの品質デフォルト値へ必ず戻す。
             RefreshEncoderQualityRange(resetToDefault: true);
             RefreshRateModeUi();
@@ -126,6 +127,7 @@ namespace Kishimn.Views
             }
 
             RefreshContainerUi();
+            SyncOutputExtensionWithContainer();
             UpdateCommandPreview();
         }
 
@@ -467,6 +469,32 @@ namespace Kishimn.Views
                 : Path.GetFileNameWithoutExtension(inputPath);
 
             return $"{baseName}_out";
+        }
+
+        // コンテナ変更時に、既に設定済みの保存先拡張子を選択コンテナへ合わせる。
+        private void SyncOutputExtensionWithContainer()
+        {
+            string outputPath = OutputPathTextBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(outputPath))
+            {
+                return;
+            }
+
+            try
+            {
+                string targetExtension = $".{SelectedContainerValue()}";
+                string currentExtension = Path.GetExtension(outputPath);
+                if (string.Equals(currentExtension, targetExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                OutputPathTextBox.Text = Path.ChangeExtension(outputPath, targetExtension);
+            }
+            catch
+            {
+                // 不正なパス形式などで変換できない場合は、ユーザー入力をそのまま維持する。
+            }
         }
 
         // ビットレート入力値を安全な範囲の整数に正規化する。
