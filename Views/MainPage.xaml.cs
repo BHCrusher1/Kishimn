@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using Windows.Storage.Pickers;
 
 namespace Kishimn.Views
@@ -42,9 +41,13 @@ namespace Kishimn.Views
             FrameRateComboBox.DisplayMemberPath = nameof(OptionItem<string>.Label);
             FrameRateComboBox.SelectedValuePath = nameof(OptionItem<string>.Value);
 
-            RateModeComboBox.ItemsSource = RateModeOptions.Select(static option => option.Label).ToList();
+            RateModeComboBox.ItemsSource = RateModeOptions;
+            RateModeComboBox.DisplayMemberPath = nameof(OptionItem<RateMode>.Label);
+            RateModeComboBox.SelectedValuePath = nameof(OptionItem<RateMode>.Value);
 
-            AudioOptionComboBox.ItemsSource = AudioOptions.Select(static option => option.Label).ToList();
+            AudioOptionComboBox.ItemsSource = AudioOptions;
+            AudioOptionComboBox.DisplayMemberPath = nameof(OptionItem<AudioMode>.Label);
+            AudioOptionComboBox.SelectedValuePath = nameof(OptionItem<AudioMode>.Value);
 
             _isInitializing = false;
         }
@@ -58,9 +61,9 @@ namespace Kishimn.Views
             FastStartCheckBox.IsChecked = true;
             VideoEncoderComboBox.SelectedIndex = DefaultVideoEncoderIndex;
             FrameRateComboBox.SelectedValue = DefaultFrameRate;
-            RateModeComboBox.SelectedIndex = FindOptionIndexByValue(RateModeOptions, DefaultRateMode);
+            RateModeComboBox.SelectedValue = DefaultRateMode;
             BitrateTextBox.Text = DefaultBitrateKbps.ToString(CultureInfo.InvariantCulture);
-            AudioOptionComboBox.SelectedIndex = FindOptionIndexByValue(AudioOptions, DefaultAudioOption);
+            AudioOptionComboBox.SelectedValue = DefaultAudioOption;
 
             _isInitializing = false;
 
@@ -631,41 +634,11 @@ namespace Kishimn.Views
 
         // 現在選択中のレート指定モードを取得する。
         private RateMode SelectedRateMode()
-        {
-            int selectedIndex = RateModeComboBox.SelectedIndex;
-            if (selectedIndex < 0 || selectedIndex >= RateModeOptions.Count)
-            {
-                return DefaultRateMode;
-            }
-
-            return RateModeOptions[selectedIndex].Value;
-        }
+            => RateModeComboBox.SelectedValue is RateMode mode ? mode : DefaultRateMode;
 
         // 現在選択中の音声モード値を取得する。
         private AudioMode SelectedAudioMode()
-        {
-            int selectedIndex = AudioOptionComboBox.SelectedIndex;
-            if (selectedIndex < 0 || selectedIndex >= AudioOptions.Count)
-            {
-                return DefaultAudioOption;
-            }
-
-            return AudioOptions[selectedIndex].Value;
-        }
-
-        // 指定値に一致する選択肢インデックスを返す。
-        private static int FindOptionIndexByValue<TValue>(IReadOnlyList<OptionItem<TValue>> options, TValue value)
-        {
-            for (int index = 0; index < options.Count; index++)
-            {
-                if (EqualityComparer<TValue>.Default.Equals(options[index].Value, value))
-                {
-                    return index;
-                }
-            }
-
-            return DefaultOptionFallbackIndex;
-        }
+            => AudioOptionComboBox.SelectedValue is AudioMode mode ? mode : DefaultAudioOption;
 
         // エラーメッセージをダイアログ表示する。
         private async Task ShowMessageAsync(string message)

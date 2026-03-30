@@ -78,7 +78,6 @@ namespace Kishimn.Views
         private const string DefaultFrameRate = "original";
         private const RateMode DefaultRateMode = RateMode.Quality;
         private const AudioMode DefaultAudioOption = AudioMode.Copy;
-        private const int DefaultOptionFallbackIndex = 0;
         private const int DefaultBitrateKbps = 2500;
 
         // 表示用ラベルと内部値を保持する共通項目。
