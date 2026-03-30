@@ -275,7 +275,13 @@ namespace Kishimn.Views
                     WorkingDirectory = Path.GetDirectoryName(OutputPathTextBox.Text.Trim()) ?? AppContext.BaseDirectory
                 };
 
-                _ = Process.Start(startInfo);
+                // 返却された Process を明示的に破棄し、プロセスハンドルを速やかに解放する。
+                using Process? startedProcess = Process.Start(startInfo);
+                if (startedProcess is null)
+                {
+                    await ShowMessageAsync("ffmpeg の起動に失敗しました。");
+                    return;
+                }
             }
             catch (Exception ex)
             {
