@@ -81,7 +81,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="レート指定" />
-                        <RadioButtons x:Name="RateModeRadioButtons" Grid.Column="1" SelectionChanged="OnRateModeChanged" />
+                        <RadioButtons x:Name="RateModeRadioButtons" Grid.Column="1" MaxColumns="2" SelectionChanged="OnRateModeChanged" />
                     </Grid>
 
                     <Grid ColumnSpacing="12">
@@ -120,7 +120,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="音声オプション" />
-                        <RadioButtons x:Name="AudioOptionRadioButtons" Grid.Column="1" SelectionChanged="OnAnySettingChanged" />
+                        <RadioButtons x:Name="AudioOptionRadioButtons" Grid.Column="1" MaxColumns="4" SelectionChanged="OnAnySettingChanged" />
                     </Grid>
                 </StackPanel>
             </StackPanel>
