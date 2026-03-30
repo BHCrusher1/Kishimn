@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Media;
 
 namespace Kishimn
 {
@@ -29,6 +30,10 @@ namespace Kishimn
             }
 
             _ = rootFrame.Navigate(typeof(MainPage), e.Arguments);
+
+            // システム背景にMicaを適用し、未対応環境ではOS側のフォールバックに任せる。
+            MainWindow.SystemBackdrop = new MicaBackdrop();
+
             MainWindow.Activate();
         }
 
