@@ -16,7 +16,7 @@ namespace Kishimn.Views
         // 表示名 / FFmpegエンコーダー名 / コーデックファミリー / 品質指定パラメータ種別 / 品質値の最小値 / 品質値の最大値 / 品質値のデフォルト値
         private static readonly IReadOnlyList<EncoderOption> VideoEncoderOptions =
         [
-            new("H264 (CPU)", "libx264", VideoCodecFamily.H264, RateParamKind.Crf, 16, 40, 23),
+            new("H264 (CPU)", "libx264", VideoCodecFamily.H264, RateParamKind.Crf, 0, 51, 23),
             new("H264 (AMD AMF)", "h264_amf", VideoCodecFamily.H264, RateParamKind.AmfH264Qp, 0, 51, 23),
             new("H264 (Intel QSV)", "h264_qsv", VideoCodecFamily.H264, RateParamKind.GlobalQuality, 1, 51, 23),
             new("H264 (NVIDIA NVENC)", "h264_nvenc", VideoCodecFamily.H264, RateParamKind.Cq, 0, 51, 23),
@@ -37,6 +37,7 @@ namespace Kishimn.Views
         private static readonly IReadOnlyList<OptionItem<string>> FrameRateOptions =
         [
             new("オリジナル", "original"),
+            new("1", "1"),
             new("5", "5"),
             new("10", "10"),
             new("15", "15"),
