@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -12,7 +12,7 @@
     Publisher="CN=BHCrusher1"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="814f7e11-63c5-4468-b244-8305b633191d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="814f7e11-63c5-4468-b244-8305b633191d" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
 
   <Properties>
     <DisplayName>Kishimn</DisplayName>
@@ -26,7 +26,7 @@
   </Dependencies>
 
   <Resources>
-    <Resource Language="x-generate"/>
+    <Resource Language="x-generate" />
   </Resources>
 
   <Applications>
