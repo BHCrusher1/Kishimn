@@ -214,8 +214,10 @@ namespace Kishimn.Views
                 }
             }
 
-            FileSavePicker picker = new();
-            picker.SuggestedFileName = BuildSuggestedOutputName();
+            FileSavePicker picker = new()
+            {
+                SuggestedFileName = BuildSuggestedOutputName()
+            };
             picker.FileTypeChoices.Add("Video", [$".{SelectedContainerValue()}"]);
             WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow));
 
