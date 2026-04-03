@@ -31,23 +31,23 @@ namespace Kishimn.Views
             _isInitializing = true;
 
             ContainerComboBox.ItemsSource = ContainerOptions;
-            ContainerComboBox.DisplayMemberPath = nameof(OptionItem<string>.Label);
-            ContainerComboBox.SelectedValuePath = nameof(OptionItem<string>.Value);
+            ContainerComboBox.DisplayMemberPath = nameof(OptionItem<>.Label);
+            ContainerComboBox.SelectedValuePath = nameof(OptionItem<>.Value);
 
             VideoEncoderComboBox.ItemsSource = VideoEncoderOptions;
             VideoEncoderComboBox.DisplayMemberPath = nameof(EncoderOption.Label);
 
             FrameRateComboBox.ItemsSource = FrameRateOptions;
-            FrameRateComboBox.DisplayMemberPath = nameof(OptionItem<string>.Label);
-            FrameRateComboBox.SelectedValuePath = nameof(OptionItem<string>.Value);
+            FrameRateComboBox.DisplayMemberPath = nameof(OptionItem<>.Label);
+            FrameRateComboBox.SelectedValuePath = nameof(OptionItem<>.Value);
 
             RateModeComboBox.ItemsSource = RateModeOptions;
-            RateModeComboBox.DisplayMemberPath = nameof(OptionItem<RateMode>.Label);
-            RateModeComboBox.SelectedValuePath = nameof(OptionItem<RateMode>.Value);
+            RateModeComboBox.DisplayMemberPath = nameof(OptionItem<>.Label);
+            RateModeComboBox.SelectedValuePath = nameof(OptionItem<>.Value);
 
             AudioOptionComboBox.ItemsSource = AudioOptions;
-            AudioOptionComboBox.DisplayMemberPath = nameof(OptionItem<AudioMode>.Label);
-            AudioOptionComboBox.SelectedValuePath = nameof(OptionItem<AudioMode>.Value);
+            AudioOptionComboBox.DisplayMemberPath = nameof(OptionItem<>.Label);
+            AudioOptionComboBox.SelectedValuePath = nameof(OptionItem<>.Value);
 
             _isInitializing = false;
         }
