@@ -46,8 +46,8 @@ namespace Kishimn.Views
             RateModeComboBox.SelectedValuePath = nameof(OptionItem<>.Value);
 
             AudioOptionComboBox.ItemsSource = AudioOptions;
-            AudioOptionComboBox.DisplayMemberPath = nameof(OptionItem<>.Label);
-            AudioOptionComboBox.SelectedValuePath = nameof(OptionItem<>.Value);
+            AudioOptionComboBox.DisplayMemberPath = nameof(AudioOptionItem.Label);
+            AudioOptionComboBox.SelectedValuePath = nameof(AudioOptionItem.Key);
 
             _isInitializing = false;
         }
@@ -63,7 +63,7 @@ namespace Kishimn.Views
             FrameRateComboBox.SelectedValue = DefaultFrameRate;
             RateModeComboBox.SelectedValue = DefaultRateMode;
             BitrateTextBox.Text = DefaultBitrateKbps.ToString(CultureInfo.InvariantCulture);
-            AudioOptionComboBox.SelectedValue = DefaultAudioOption;
+            AudioOptionComboBox.SelectedValue = DefaultAudioOptionKey;
 
             _isInitializing = false;
 
@@ -84,7 +84,7 @@ namespace Kishimn.Views
         // レート指定に応じて品質スライダーとビットレート入力の表示を切り替える。
         private void RefreshRateModeUi()
         {
-            bool qualityMode = SelectedRateMode() == RateMode.Quality;
+            bool qualityMode = IsQualityRateModeSelected();
             QualitySliderPanel.Visibility = qualityMode ? Visibility.Visible : Visibility.Collapsed;
             BitratePanel.Visibility = qualityMode ? Visibility.Collapsed : Visibility.Visible;
         }
@@ -363,7 +363,7 @@ namespace Kishimn.Views
             }
 
             // ビットレートモードでは値の妥当性を検証する。
-            if (SelectedRateMode() == RateMode.Bitrate && !TryParseBitrateKbps(out _))
+            if (!IsQualityRateModeSelected() && !TryParseBitrateKbps(out _))
             {
                 errorMessage = "ビットレートは 1 以上の整数 (kbps) を入力してください。";
                 return false;
@@ -403,7 +403,7 @@ namespace Kishimn.Views
             }
 
             // レートモードごとに動画品質関連オプションを分割して追加する。
-            if (SelectedRateMode() == RateMode.Quality)
+            if (IsQualityRateModeSelected())
             {
                 int quality = (int)Math.Round(QualitySlider.Value);
                 AddQualityOptions(args, encoder, quality);
@@ -425,7 +425,11 @@ namespace Kishimn.Views
             }
 
             // 音声オプションを追加する。
-            AddAudioOptions(args, SelectedAudioMode());
+            AudioOptionItem audioOption = SelectedAudioOption();
+            if (!string.IsNullOrWhiteSpace(audioOption.Argument))
+            {
+                args.Add(audioOption.Argument);
+            }
 
             args.Add(Quote(output));
             return string.Join(' ', args);
@@ -475,37 +479,6 @@ namespace Kishimn.Views
             args.Add($"{bitrateKbps}k");
             args.Add("-bufsize");
             args.Add($"{bitrateKbps * 2}k");
-        }
-
-        // 音声モードごとのオプションを追加する。
-        private static void AddAudioOptions(List<string> args, AudioMode mode)
-        {
-            switch (mode)
-            {
-                case AudioMode.None:
-                    args.Add("-an");
-                    break;
-                case AudioMode.Copy:
-                    args.Add("-c:a");
-                    args.Add("copy");
-                    break;
-                case AudioMode.YouTube:
-                    args.Add("-af");
-                    args.Add("loudnorm=I=-14:LRA=11:TP=-1.5");
-                    args.Add("-c:a");
-                    args.Add("aac");
-                    args.Add("-b:a");
-                    args.Add("192k");
-                    break;
-                case AudioMode.Arib:
-                    args.Add("-af");
-                    args.Add("loudnorm=I=-24:LRA=7:TP=-2");
-                    args.Add("-c:a");
-                    args.Add("aac");
-                    args.Add("-b:a");
-                    args.Add("192k");
-                    break;
-            }
         }
 
         // 現在の設定から保存ダイアログ用の推奨ファイル名を作成する。
@@ -648,13 +621,25 @@ namespace Kishimn.Views
         private string SelectedFrameRateValue()
             => FrameRateComboBox.SelectedValue as string ?? DefaultFrameRate;
 
-        // 現在選択中のレート指定モードを取得する。
-        private RateMode SelectedRateMode()
-            => RateModeComboBox.SelectedValue is RateMode mode ? mode : DefaultRateMode;
+        // 現在選択中のレート指定キーを取得する。
+        private string SelectedRateModeValue()
+            => RateModeComboBox.SelectedValue as string ?? DefaultRateMode;
 
-        // 現在選択中の音声モード値を取得する。
-        private AudioMode SelectedAudioMode()
-            => AudioOptionComboBox.SelectedValue is AudioMode mode ? mode : DefaultAudioOption;
+        // 品質値モードが選択されているかどうかを返す。
+        private bool IsQualityRateModeSelected()
+            => string.Equals(SelectedRateModeValue(), RateModeQuality, StringComparison.Ordinal);
+
+        // 現在選択中の音声オプション定義を取得する。
+        private AudioOptionItem SelectedAudioOption()
+        {
+            // コンボボックスの選択キーを取得し、未選択時は既定キーへフォールバックする。
+            string selectedKey = AudioOptionComboBox.SelectedValue as string ?? DefaultAudioOptionKey;
+
+            // 選択キーに一致する定義を検索し、見つからなければ既定定義を返す。
+            AudioOptionItem? selectedOption = AudioOptions.FirstOrDefault(option => string.Equals(option.Key, selectedKey, StringComparison.Ordinal));
+            return selectedOption
+                ?? AudioOptions.First(option => string.Equals(option.Key, DefaultAudioOptionKey, StringComparison.Ordinal));
+        }
 
         // エラーメッセージをダイアログ表示する。
         private async Task ShowMessageAsync(string message)

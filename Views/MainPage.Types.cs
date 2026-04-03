@@ -57,27 +57,30 @@ namespace Kishimn.Views
         ];
 
         // レート指定の選択肢一覧。
-        private static readonly IReadOnlyList<OptionItem<RateMode>> RateModeOptions =
+        private static readonly IReadOnlyList<OptionItem<string>> RateModeOptions =
         [
-            new("品質値", RateMode.Quality),
-            new("ビットレート", RateMode.Bitrate)
+            new("品質値", RateModeQuality),
+            new("ビットレート", RateModeBitrate)
         ];
 
         // 音声オプションの選択肢一覧。
-        private static readonly IReadOnlyList<OptionItem<AudioMode>> AudioOptions =
+        // 表示名 / 内部識別子 / FFmpeg音声引数
+        private static readonly IReadOnlyList<AudioOptionItem> AudioOptions =
         [
-            new("音声無し (-an)", AudioMode.None),
-            new("コピー (-c:a copy)", AudioMode.Copy),
-            new("音量調整 (YouTube)", AudioMode.YouTube),
-            new("音量調整 (ARIB TR-B32)", AudioMode.Arib)
+            new("音声無し (-an)", "none", "-an"),
+            new("コピー (-c:a copy)", "copy", "-c:a copy"),
+            new("音量調整 (YouTube)", "youtube", "-af loudnorm=I=-14:LRA=11:TP=-1.5"),
+            new("音量調整 (ARIB TR-B32)", "arib", "-af loudnorm=I=-24:LRA=7:TP=-2")
         ];
 
         // 既定値。
         private const string DefaultContainer = "mp4";
         private const int DefaultVideoEncoderIndex = 0;
         private const string DefaultFrameRate = "original";
-        private const RateMode DefaultRateMode = RateMode.Quality;
-        private const AudioMode DefaultAudioOption = AudioMode.Copy;
+        private const string RateModeQuality = "quality";
+        private const string RateModeBitrate = "bitrate";
+        private const string DefaultRateMode = RateModeQuality;
+        private const string DefaultAudioOptionKey = "copy";
         private const int DefaultBitrateKbps = 2500;
 
         // 表示用ラベルと内部値を保持する共通項目。
@@ -103,21 +106,11 @@ namespace Kishimn.Views
             AmfAv1Qp
         }
 
-        // レート指定モードを表す列挙型。
-        private enum RateMode
-        {
-            Quality,
-            Bitrate
-        }
-
-        // 音声モードを表す列挙型。
-        private enum AudioMode
-        {
-            None,
-            Copy,
-            YouTube,
-            Arib
-        }
+        // 音声オプションの定義情報を保持する型。
+        private sealed record AudioOptionItem(
+            string Label,
+            string Key,
+            string Argument);
 
         // 動画エンコーダーごとの制約値を保持する定義。
         private sealed record EncoderOption(
