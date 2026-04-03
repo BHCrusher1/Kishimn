@@ -112,66 +112,55 @@ namespace Kishimn.Views
 
         // 一般設定変更時にコマンドプレビューを再生成する共通ハンドラ。
         private void OnAnySettingChanged(object sender, object e)
-        {
-            if (_isInitializing)
-            {
-                return;
-            }
-
-            UpdateCommandPreview();
-        }
+            => HandleSettingChanged();
 
         // コンテナ変更時に関連UIを更新してコマンドプレビューへ反映する。
         private void OnContainerChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_isInitializing)
+            => HandleSettingChanged(() =>
             {
-                return;
-            }
-
-            RefreshContainerUi();
-            bool outputPathChanged = SyncOutputExtensionWithContainer();
-            if (!outputPathChanged)
-            {
-                UpdateCommandPreview();
-            }
-        }
+                RefreshContainerUi();
+                return SyncOutputExtensionWithContainer();
+            });
 
         // エンコーダー変更時に品質範囲を更新してコマンドプレビューへ反映する。
         private void OnVideoEncoderChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_isInitializing)
+            => HandleSettingChanged(() =>
             {
-                return;
-            }
-
-            RefreshEncoderQualityRange();
-            UpdateCommandPreview();
-        }
+                RefreshEncoderQualityRange();
+                return false;
+            });
 
         // レート指定変更時に表示切替を行い、コマンドプレビューへ反映する。
         private void OnRateModeChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_isInitializing)
+            => HandleSettingChanged(() =>
             {
-                return;
-            }
-
-            RefreshRateModeUi();
-            UpdateCommandPreview();
-        }
+                RefreshRateModeUi();
+                return false;
+            });
 
         // 品質設定変更時に品質表示とコマンドプレビューを更新するハンドラ。
         private void OnQualitySettingChanged(object sender, object e)
+            => HandleSettingChanged(() =>
+            {
+                int qualityValue = (int)Math.Round(QualitySlider.Value);
+                QualityValueTextBlock.Text = $"品質値: {qualityValue.ToString(CultureInfo.InvariantCulture)}";
+                return false;
+            });
+
+        // 設定変更時の共通処理として、初期化中ガードとプレビュー更新を統一する。
+        // beforePreview が true を返した場合は、呼び出し元で別イベント更新が走る前提でプレビュー更新を抑止する。
+        private void HandleSettingChanged(Func<bool>? beforePreview = null)
         {
             if (_isInitializing)
             {
                 return;
             }
 
-            int qualityValue = (int)Math.Round(QualitySlider.Value);
-            QualityValueTextBlock.Text = $"品質値: {qualityValue.ToString(CultureInfo.InvariantCulture)}";
-            UpdateCommandPreview();
+            bool suppressPreview = beforePreview?.Invoke() ?? false;
+            if (!suppressPreview)
+            {
+                UpdateCommandPreview();
+            }
         }
 
         // 入力ファイルの参照ダイアログを開いて選択結果を反映する。
