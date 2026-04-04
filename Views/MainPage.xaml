@@ -7,32 +7,5 @@
     xmlns:local="using:Kishimn"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <Page.Content>
-        <StackPanel
-            HorizontalAlignment="Center"
-            Spacing="25"
-            VerticalAlignment="Center">
-            <TextBlock
-                FontSize="24"
-                HorizontalAlignment="Center"
-                Style="{StaticResource MyLabel}"
-                Text="Hello, World!" />
-            <TextBlock
-                FontSize="20"
-                HorizontalAlignment="Center"
-                Style="{StaticResource MyLabel}"
-                Text="Welcome to WinUI 3!" />
-            <TextBlock
-                x:Name="txtCount"
-                FontSize="16"
-                HorizontalAlignment="Center"
-                Style="{StaticResource MyLabel}"
-                Text="Current count: 0" />
-            <Button
-                Click="OnCountClicked"
-                Content="Click Me"
-                HorizontalAlignment="Center"
-                Style="{StaticResource PrimaryAction}" />
-        </StackPanel>
-    </Page.Content>
+    <Page.Content />
 </Page>

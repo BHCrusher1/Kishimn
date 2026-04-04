@@ -1,18 +1,16 @@
 namespace Kishimn.Views
 {
     /// <summary>
-    /// A simple page that can be used on its own or navigated to within a Frame.
+    /// アプリケーションのメイン画面を表すページです。
     /// </summary>
-    public partial class MainPage : Page
+    public sealed partial class MainPage : Page
     {
-        int count = 0;
-
+        /// <summary>
+        /// <see cref="MainPage"/> クラスの新しいインスタンスを初期化します。
+        /// </summary>
         public MainPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
-
-        private void OnCountClicked(object sender, RoutedEventArgs e)
-            => txtCount.Text = $"Current count: {count++}";
     }
 }
