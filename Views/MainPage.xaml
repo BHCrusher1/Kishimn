@@ -4,8 +4,214 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:Kishimn"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <Page.Content />
+    <Grid Margin="0,16" RowSpacing="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollView Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel MaxWidth="1000" Padding="24,0" Spacing="24">
+                <StackPanel Spacing="4">
+                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="一般" />
+                    <Border Padding="16"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{ThemeResource ControlCornerRadius}">
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="変換元ファイル" />
+                        <TextBox x:Name="InputPathTextBox" Grid.Column="1" TextChanged="OnAnySettingChanged" />
+                        <Button Grid.Column="2" Content="参照" Click="OnBrowseInputClick" />
+                    </Grid>
+                    </Border>
+
+                    <Border Padding="16"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{ThemeResource ControlCornerRadius}">
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="保存先ファイル" />
+                            <TextBox x:Name="OutputPathTextBox" Grid.Column="1" TextChanged="OnAnySettingChanged" />
+                            <Button Grid.Column="2" Content="参照" Click="OnBrowseOutputClick" />
+                        </Grid>
+
+                    </Border>
+                    <Border Padding="16"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{ThemeResource ControlCornerRadius}">
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="コンテナ" />
+                            <ComboBox x:Name="ContainerComboBox" Grid.Column="1" HorizontalAlignment="Right" SelectionChanged="OnContainerChanged" />
+                            <CheckBox x:Name="FastStartCheckBox" Grid.Column="2" VerticalAlignment="Center" Content="Web用に最適化" Checked="OnAnySettingChanged" Unchecked="OnAnySettingChanged" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Spacing="4">
+                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="動画" />
+                    <Border Padding="16"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{ThemeResource ControlCornerRadius}">
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <FontIcon Glyph="&#xE8B2;" Grid.Column="0" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="エンコーダー" />
+                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="変換先の動画コーデックと変換方法を選択します" />
+                            </StackPanel>
+                            <ComboBox x:Name="VideoEncoderComboBox" Grid.Column="2" HorizontalAlignment="Right" SelectionChanged="OnVideoEncoderChanged" />
+                        </Grid>
+                    </Border>
+
+                    <Border Padding="16"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{ThemeResource ControlCornerRadius}">
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <FontIcon Glyph="&#xF571;" Grid.Column="0" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="フレームレート" />
+                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="動画のフレームレート（1秒間の描画枚数）を選択します" />
+                            </StackPanel>
+                            <ComboBox x:Name="FrameRateComboBox" Grid.Column="2" HorizontalAlignment="Right" SelectionChanged="OnAnySettingChanged" />
+                        </Grid>
+                    </Border>
+
+                    <Border Padding="16"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{ThemeResource ControlCornerRadius}">
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <FontIcon Glyph="&#xF4A5;" Grid.Column="0" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="レート指定" />
+                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="動画の品質の指定方法を選択します" />
+                            </StackPanel>
+                            <ComboBox x:Name="RateModeComboBox" Grid.Column="2" HorizontalAlignment="Right" SelectionChanged="OnRateModeChanged" />
+                        </Grid>
+                    </Border>
+
+                    <Border Padding="16"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{ThemeResource ControlCornerRadius}">
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <FontIcon Glyph="&#xF4A5;" Grid.Column="0" Opacity="0" />
+                            <StackPanel Grid.Column="1" Spacing="0">
+                                <Grid x:Name="QualityPanel" ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="QualityValueTextBlock" Grid.Column="0" VerticalAlignment="Center" />
+                                    <StackPanel Grid.Column="1">
+                                        <Slider x:Name="QualitySlider" SmallChange="1" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" ValueChanged="OnQualitySettingChanged" />
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock x:Name="QualityMinLabelTextBlock" Grid.Column="0" HorizontalAlignment="Left" />
+                                            <TextBlock x:Name="QualityMaxLabelTextBlock" Grid.Column="1" HorizontalAlignment="Right" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Grid>
+
+                                <StackPanel x:Name="BitratePanel" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="12" Visibility="Collapsed">
+                                    <TextBlock VerticalAlignment="Center" Text="ビットレート" />
+                                    <TextBox x:Name="BitrateTextBox" Width="120" InputScope="Number" TextChanged="OnAnySettingChanged" />
+                                    <TextBlock VerticalAlignment="Center" Text="kbps" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Spacing="4">
+                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="音声" />
+                    <Border Padding="16"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{ThemeResource ControlCornerRadius}">
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <FontIcon Glyph="&#xE8D6;" Grid.Column="0" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="音声オプション" />
+                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="動画音声の加工を選択します" />
+                            </StackPanel>
+                            <ComboBox x:Name="AudioOptionComboBox" Grid.Column="2" HorizontalAlignment="Right" SelectionChanged="OnAnySettingChanged" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </ScrollView>
+        <StackPanel Grid.Row="1" MaxWidth="1000" Padding="24,0">
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Spacing="8">
+                    <TextBlock Text="FFmpeg コマンドライン" />
+                    <TextBox x:Name="CommandLineTextBox" MinHeight="80" IsReadOnly="True" TextWrapping="Wrap" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Bottom" Spacing="8">
+                    <Button Width="120" Content="リセット" Click="OnResetClick" />
+                    <Button Width="120" Content="実行" Style="{StaticResource AccentButtonStyle}" Click="OnExecuteClick" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Grid>
 </Page>

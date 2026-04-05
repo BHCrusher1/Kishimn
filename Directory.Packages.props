@@ -4,6 +4,7 @@
     <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.*" />
     <PackageVersion Include="Microsoft.WindowsAppSDK.Runtime" Version="1.8.*" />
     <PackageVersion Include="Microsoft.WindowsAppSDK.WinUI" Version="1.8.*" />
   </ItemGroup>
