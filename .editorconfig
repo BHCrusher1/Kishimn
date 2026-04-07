@@ -14,6 +14,10 @@ tab_width = 4
 [*{_AssemblyInfo.cs,.notsupported.cs,AsmOffsets.cs}]
 generated_code = true
 
+# xaml ファイル
+[*.xaml]
+end_of_line = crlf
+
 # C# ファイル
 [*.cs]
 
