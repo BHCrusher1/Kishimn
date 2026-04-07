@@ -356,6 +356,10 @@ namespace Kishimn.Views
             }
         }
 
+        /// <summary>
+        /// 実行時に使用する設定を構築します。
+        /// </summary>
+        /// <returns>実行用の設定。</returns>
         private FfmpegSettings BuildSettings()
         {
             return new FfmpegSettings
@@ -374,6 +378,28 @@ namespace Kishimn.Views
         }
 
         /// <summary>
+        /// コマンドライン表示用の設定を構築します。
+        /// </summary>
+        /// <returns>表示用の設定。</returns>
+        private FfmpegSettings BuildPreviewSettings()
+        {
+            FfmpegSettings settings = BuildSettings();
+            return new FfmpegSettings
+            {
+                InputPath = string.IsNullOrWhiteSpace(settings.InputPath) ? "<input>" : settings.InputPath,
+                OutputPath = string.IsNullOrWhiteSpace(settings.OutputPath) ? "<output>" : settings.OutputPath,
+                Container = settings.Container,
+                UseFastStart = settings.UseFastStart,
+                Encoder = settings.Encoder,
+                FrameRate = settings.FrameRate,
+                RateMode = settings.RateMode,
+                Quality = settings.Quality,
+                BitrateKbps = settings.BitrateKbps,
+                AudioOption = settings.AudioOption,
+            };
+        }
+
+        /// <summary>
         /// コマンドライン表示を更新します。
         /// </summary>
         private void UpdateCommandLine()
@@ -384,7 +410,7 @@ namespace Kishimn.Views
                 return;
             }
 
-            CommandLineTextBox.Text = FfmpegCommandBuilder.BuildCommandLine(ffmpegExecutablePath, BuildSettings());
+            CommandLineTextBox.Text = FfmpegCommandBuilder.BuildCommandLine(ffmpegExecutablePath, BuildPreviewSettings());
         }
 
         /// <summary>
