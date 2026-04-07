@@ -193,6 +193,24 @@
                         </Grid>
                     </Border>
                 </StackPanel>
+
+                <StackPanel Spacing="4">
+                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="追加オプション" />
+                    <Border Padding="16"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{ThemeResource ControlCornerRadius}">
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <FontIcon Glyph="&#xE70F;" Grid.Column="0" />
+                            <TextBox x:Name="AdditionalOptionsTextBox" Grid.Column="1" PlaceholderText="任意の引数を入力できます" TextChanged="OnAnySettingChanged" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
             </StackPanel>
         </ScrollView>
         <StackPanel Grid.Row="1" MaxWidth="1000" Padding="24,0">

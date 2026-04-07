@@ -1,27 +1,27 @@
 namespace Kishimn.Models
 {
     /// <summary>
-    /// FFmpeg コマンド生成に必要な画面設定を表します。
+    /// FFmpeg コマンド構築に使用する設定を保持します。
     /// </summary>
     internal sealed class FfmpegSettings
     {
         /// <summary>
-        /// 変換元ファイルパスを取得または設定します。
+        /// 入力ファイルパスを取得または設定します。
         /// </summary>
         public required string InputPath { get; init; }
 
         /// <summary>
-        /// 保存先ファイルパスを取得または設定します。
+        /// 出力ファイルパスを取得または設定します。
         /// </summary>
         public required string OutputPath { get; init; }
 
         /// <summary>
-        /// 出力コンテナ形式を取得または設定します。
+        /// コンテナ形式を取得または設定します。
         /// </summary>
         public required ContainerKind Container { get; init; }
 
         /// <summary>
-        /// MP4 最適化を適用するかどうかを取得または設定します。
+        /// MP4 の FastStart を使用するかどうかを取得または設定します。
         /// </summary>
         public required bool UseFastStart { get; init; }
 
@@ -31,7 +31,7 @@ namespace Kishimn.Models
         public required VideoEncoderProfile Encoder { get; init; }
 
         /// <summary>
-        /// フレームレートを取得または設定します。
+        /// フレームレート設定を取得または設定します。
         /// </summary>
         public required FrameRateOption FrameRate { get; init; }
 
@@ -51,8 +51,13 @@ namespace Kishimn.Models
         public required int? BitrateKbps { get; init; }
 
         /// <summary>
-        /// 音声設定を取得または設定します。
+        /// 音声オプションを取得または設定します。
         /// </summary>
         public required AudioOptionKind AudioOption { get; init; }
+
+        /// <summary>
+        /// 追加の FFmpeg 引数を取得または設定します。
+        /// </summary>
+        public required string AdditionalOptions { get; init; }
     }
 }

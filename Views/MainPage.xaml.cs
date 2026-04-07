@@ -150,6 +150,7 @@ namespace Kishimn.Views
 
                 FastStartCheckBox.IsChecked = true;
                 BitrateTextBox.Text = "6000";
+                AdditionalOptionsTextBox.Text = string.Empty;
 
                 ApplyEncoderQualityRange(GetSelectedEncoder());
                 UpdateRateModePanels();
@@ -374,6 +375,7 @@ namespace Kishimn.Views
                 Quality = (int)Math.Round(QualitySlider.Value, MidpointRounding.AwayFromZero),
                 BitrateKbps = ParseBitrate(BitrateTextBox.Text),
                 AudioOption = GetSelectedAudioOption(),
+                AdditionalOptions = AdditionalOptionsTextBox.Text.Trim(),
             };
         }
 
@@ -396,6 +398,7 @@ namespace Kishimn.Views
                 Quality = settings.Quality,
                 BitrateKbps = settings.BitrateKbps,
                 AudioOption = settings.AudioOption,
+                AdditionalOptions = settings.AdditionalOptions,
             };
         }
 

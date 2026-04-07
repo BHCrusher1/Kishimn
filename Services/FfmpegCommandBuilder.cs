@@ -55,6 +55,7 @@ namespace Kishimn.Services
             }
 
             AppendAudioArguments(args, settings.AudioOption);
+            AppendAdditionalOptions(args, settings.AdditionalOptions);
 
             args.Add(Quote(settings.OutputPath));
             return string.Join(' ', args);
@@ -150,6 +151,21 @@ namespace Kishimn.Services
                     args.Add("copy");
                     break;
             }
+        }
+
+        /// <summary>
+        /// ユーザー指定の追加引数を追加します。
+        /// </summary>
+        /// <param name="args">追加対象の引数リスト。</param>
+        /// <param name="additionalOptions">追加する引数文字列。</param>
+        private static void AppendAdditionalOptions(List<string> args, string additionalOptions)
+        {
+            if (string.IsNullOrWhiteSpace(additionalOptions))
+            {
+                return;
+            }
+
+            args.Add(additionalOptions.Trim());
         }
 
         /// <summary>
