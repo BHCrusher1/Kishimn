@@ -29,6 +29,12 @@ namespace Kishimn.Services
             if (settings.RateMode == RateModeKind.Quality)
             {
                 AppendQualityArguments(args, settings.Encoder.CodecName, settings.Encoder.QualityArgumentKind, settings.Quality);
+
+                if (settings.Encoder.NeedsZeroBitrate)
+                {
+                    args.Add("-b:v");
+                    args.Add("0");
+                }
             }
             else if (settings.BitrateKbps is int bitrateKbps && bitrateKbps > 0)
             {

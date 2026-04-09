@@ -10,6 +10,7 @@ namespace Kishimn.Models
     /// <param name="qualityMax">品質値の最大値。</param>
     /// <param name="qualityDefault">品質値の既定値。</param>
     /// <param name="requiresHvc1Tag">H.265 で <c>-tag:v hvc1</c> を追加するかどうか。</param>
+    /// <param name="requiresZeroBitrateForCrf">CRF 指定時に <c>-b:v 0</c> を追加するかどうか。</param>
     internal sealed class VideoEncoderProfile(
         string label,
         string codecName,
@@ -17,7 +18,8 @@ namespace Kishimn.Models
         int qualityMin,
         int qualityMax,
         int qualityDefault,
-        bool requiresHvc1Tag = false)
+        bool requiresHvc1Tag = false,
+        bool requiresZeroBitrateForCrf = false)
     {
         /// <summary>
         /// 画面表示ラベルを取得します。
@@ -53,5 +55,16 @@ namespace Kishimn.Models
         /// H.265 で <c>-tag:v hvc1</c> を追加するかどうかを取得します。
         /// </summary>
         public bool RequiresHvc1Tag { get; } = requiresHvc1Tag;
+
+        /// <summary>
+        /// CRF 指定時に <c>-b:v 0</c> を追加するかどうかを取得します。
+        /// </summary>
+        public bool RequiresZeroBitrateForCrf { get; } = requiresZeroBitrateForCrf;
+
+        /// <summary>
+        /// 現在の品質指定に <c>-b:v 0</c> が必要かどうかを取得します。
+        /// </summary>
+        public bool NeedsZeroBitrate
+            => RequiresZeroBitrateForCrf && string.Equals(QualityArgumentKind, "crf", StringComparison.Ordinal);
     }
 }
